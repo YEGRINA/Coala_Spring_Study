@@ -36,4 +36,18 @@ public class MemberServiceImpl implements MemberService {
 		dao.memberDelete(vo);
 	}
 
+	// 패스워드 체크
+	@Override
+	public int passChk(MemberVO vo) throws Exception {
+		int result = dao.passChk(vo);
+		return result;
+	}
+
+	// 아이디 중복체크
+	@Override
+	public int idChk(MemberVO vo) throws Exception {
+		int result = dao.idChk(vo);
+		return result;
+	}
+
 }
