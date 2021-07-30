@@ -18,7 +18,7 @@
 			location.href = "/";
 		})
 		
-		$("#submit").on("click", function(){
+		$("#memberUpdateBtn").on("click", function(){
 			if($("#userPass").val()==""){
 				alert("비밀번호를 입력해주세요.");
 				$("#userPass").focus();
@@ -29,6 +29,22 @@
 				$("#userName").focus();
 				return false;
 			}
+			$.ajax({
+				url : "/member/passChk",
+				type : "POST",
+				dateType : "json",
+				data : $("#updateForm").serializeArray(),
+				success: function(data){
+					if(data==true){
+						if(confirm("회원정보를 수정하시겠습니까?")){
+							$("#updateForm").submit();
+						}
+					}else{
+						alert("패스워드가 틀렸습니다.");
+						return;
+					}
+				}
+			})
 		});
 		
 		$("#memberDeleteBtn").on("click", function(){
@@ -39,7 +55,7 @@
 <body>
 	<div class="container">
 		<section id="container">
-			<form action="/member/memberUpdate" method="post">
+			<form id="updateForm" action="/member/memberUpdate" method="post">
 				<div class="form-group has-feedback">
 					<label class="control-label" for="userId">아이디</label>
 					<input class="form-control" type="text" id="userId" name="userId" value="${member.userId}" readonly="readonly"/>
@@ -58,6 +74,11 @@
 					<button class="btn btn-warning" type="button" id="memberDeleteBtn" style="float: right;">회원탈퇴</button>
 				</div>
 			</form>
+			<div class="form-group has-feedback">
+				<button class="btn btn-success" type="button" id="memberUpdateBtn">회원정보수정</button>
+				<button class="cancel btn btn-danger" type="button">취소</button>
+				<button class="btn btn-warning" type="button" id="memberDeleteBtn" style="float: right;">회원탈퇴</button>
+			</div>
 		</section>
 	</div>
 </body>
