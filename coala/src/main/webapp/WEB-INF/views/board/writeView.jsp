@@ -22,6 +22,7 @@
 				formObj.attr("method","post");
 				formObj.submit();
 			});
+			fn_addFile();
 		})
 		function fn_valiChk(){
 			var regForm = $("form[name='writeForm'] .chk").length;
@@ -31,6 +32,15 @@
 					return true;
 				}
 			}
+		}
+		function fn_addFile(){
+			var fileIndex = 1;
+			$(".fileAdd_btn").on("click", function(){
+				$("#fileIndex").append("<div class='form-group'><input type='file' style='float:left;' name='file_"+(fileIndex++)+"'>"+"<button type='button' style='float:right;' id='fileDelBtn'>"+"삭제"+"</button><br></div>");
+			});
+			$(document).on("click", "#fileDelBtn", function(){
+				$(this).parent().remove();
+			});
 		}
 	</script>
 	<body>
@@ -60,11 +70,11 @@
 							<label for = "writer" class="col-sm-2 control-label">작성자</label>
 							<input type = "text" id = "writer" name = "writer" class="form-control" value="${member.userId}" readonly="readonly"/>	
 						</div>
-						<div class="form-group">
-							<input type="file" name="file" class="form-control">
+						<div class="form-group" id="fileIndex">
 						</div>
-						<div>
+						<div class="form-group">
 							<button type="button" class="write_btn btn btn-success" >작성</button>
+							<button type="button" class="fileAdd_btn btn btn-warning" >파일 추가</button>
 						</div>
 					</c:if>
 					<c:if test="${member.userId == null }">

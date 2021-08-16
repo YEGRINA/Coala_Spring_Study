@@ -25,6 +25,7 @@ public class BoardDAOImpl implements BoardDAO{
 	}
 	
 	// 게시물 목록 조회
+	@Override
 	public List<BoardVO> list(SearchCriteria scri) throws Exception {
 		return sqlSession.selectList("boardMapper.listPage", scri);
 	}
@@ -69,5 +70,17 @@ public class BoardDAOImpl implements BoardDAO{
 	@Override
 	public Map<String, Object> selectFileInfo(Map<String, Object> map) throws Exception {
 		return sqlSession.selectOne("boardMapper.selectFileInfo", map);
+	}
+
+	// 첨부파일 수정
+	@Override
+	public void updateFile(Map<String, Object> map) throws Exception {
+		sqlSession.update("boardMapper.updateFile", map);
+	}
+
+	// 게시판 조회수
+	@Override
+	public void boardHit(int bno) throws Exception {
+		sqlSession.update("boardMapper.boardHit",bno);
 	}
 }

@@ -46,14 +46,14 @@ public class BoardController {
 	}
 	
 	// 게시판 글 작성
-		@RequestMapping(value = "/board/write",method = RequestMethod.POST)
-		public String write(BoardVO boardVO, MultipartHttpServletRequest mpRequest) throws Exception{
-			logger.info("write");
-			
-			service.write(boardVO, mpRequest);
-			
-			return "redirect:/board/list";
-		}
+	@RequestMapping(value = "/board/write",method = RequestMethod.POST)
+	public String write(BoardVO boardVO, MultipartHttpServletRequest mpRequest) throws Exception{
+		logger.info("write");
+		
+		service.write(boardVO, mpRequest);
+		
+		return "redirect:/board/list";
+	}
 	
 	// 게시글 목록 조회
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
@@ -96,22 +96,26 @@ public class BoardController {
 		model.addAttribute("update", service.read(boardVO.getBno()));
 		model.addAttribute("scri", scri);
 		
+		List<Map<String,Object>> fileList = service.selectFileList(boardVO.getBno());
+		model.addAttribute("file",fileList);
+		
 		return "board/updateView";
 	}
 	
 	// 게시판 수정
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public String update(BoardVO boardVO, @ModelAttribute("scri") SearchCriteria scri, RedirectAttributes rttr) throws Exception {
+	public String update(BoardVO boardVO, @ModelAttribute("scri") SearchCriteria scri, RedirectAttributes rttr, @RequestParam(value="fileNoDel[]") String[] files, @RequestParam(value="fileNameDel[]") String[] fileNames, MultipartHttpServletRequest mpRequest) throws Exception{
 		logger.info("update");
 		
-		service.update(boardVO);
+		service.update(boardVO, files, fileNames, mpRequest);
 		
-		rttr.addAttribute("page", scri.getPage());
-		rttr.addAttribute("perPageNum", scri.getPerPageNum());
-		rttr.addAttribute("searchType", scri.getSearchType());
-		rttr.addAttribute("keyword", scri.getKeyword());
+		rttr.addAttribute("bno", boardVO.getBno());
+		rttr.addAttribute("page",scri.getPage());
+		rttr.addAttribute("perPageNum",scri.getPerPageNum());
+		rttr.addAttribute("searchType",scri.getSearchType());
+		rttr.addAttribute("keyword",scri.getKeyword());
 		
-		return "redirect:/board/list";
+		return "redirect:/board/readView";
 	}
 	
 	// 게시판 삭제
@@ -206,7 +210,7 @@ public class BoardController {
 		String storedFileName = (String) resultMap.get("STORED_FILE_NAME");
 		String originalFileName = (String) resultMap.get("ORG_FILE_NAME");
 		
-		byte fileByte[] = org.apache.commons.io.FileUtils.readFileToByteArray(new File("C:\\spring_workspace\\Coala_Spring_Study\\mp\\file\\"+storedFileName));
+		byte fileByte[] = org.apache.commons.io.FileUtils.readFileToByteArray(new File("C:\\mp\\file\\"+storedFileName));
 		
 		response.setContentType("application/octet-stream");
 		response.setContentLength(fileByte.length);
